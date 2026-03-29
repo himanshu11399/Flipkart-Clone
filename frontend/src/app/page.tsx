@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Product } from '@/lib/services/productService';
@@ -24,35 +24,50 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [slowResponse, setSlowResponse] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerRow, setItemsPerRow] = useState(2);
 
   const { searchQuery, selectedCategory } = useFilter();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        setPage(1);
-        const { products: data, totalPages: tp } = await getProductsWithMeta({
-          category: selectedCategory,
-          search: searchQuery,
-          page: 1,
-          limit: PAGE_LIMIT,
-        });
-        console.log('[Home Debug] First product data:', data[0]);
-        setProducts(data || []);
-        setTotalPages(tp);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch products');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
+  const fetchProductsItems = useCallback(async () => {
+    let slowTimeoutId: NodeJS.Timeout | null = null;
+    try {
+      setLoading(true);
+      setError(null);
+      setSlowResponse(false);
+      setPage(1);
+      
+      slowTimeoutId = setTimeout(() => {
+        setSlowResponse(true);
+      }, 5000);
+
+      const { products: data, totalPages: tp } = await getProductsWithMeta({
+        category: selectedCategory,
+        search: searchQuery,
+        page: 1,
+        limit: PAGE_LIMIT,
+      });
+      
+      if (slowTimeoutId) clearTimeout(slowTimeoutId);
+      setSlowResponse(false);
+      
+      setProducts(data || []);
+      setTotalPages(tp);
+    } catch (err: any) {
+      if (slowTimeoutId) clearTimeout(slowTimeoutId);
+      setSlowResponse(false);
+      setError('Server is unavailable. Please try again.');
+    } finally {
+      if (slowTimeoutId) clearTimeout(slowTimeoutId);
+      setLoading(false);
+    }
   }, [selectedCategory, searchQuery]);
+
+  useEffect(() => {
+    fetchProductsItems();
+  }, [fetchProductsItems]);
 
   useEffect(() => {
     const updateItemsPerRow = () => {
@@ -89,12 +104,38 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-white dark:bg-black transition-colors duration-300">
       <BannerCarousel />
       <div className="container mx-auto px-4 py-4 max-w-7xl">
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 rounded-sm p-4 mb-8 text-center flex flex-col items-center">
-            <p>{error}</p>
-            <button onClick={() => window.location.reload()} className="mt-3 text-sm text-[#2874f0] hover:underline font-medium">Try again</button>
-          </div>
-        )}
+        {/* Error Alert */}
+        <AnimatePresence>
+          {error && (
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg p-3 sm:p-4 mb-6 flex flex-col sm:flex-row items-center justify-between shadow-sm">
+              <div className="flex items-center gap-3 mb-3 sm:mb-0">
+                 <span className="text-xl">⚠️</span>
+                 <p className="font-medium text-sm sm:text-base">{error}</p>
+              </div>
+              <button onClick={fetchProductsItems} className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-sm transition-colors text-sm whitespace-nowrap active:scale-95">
+                Retry Connection
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Slow API Alert */}
+        <AnimatePresence>
+          {slowResponse && loading && !error && (
+            <motion.div initial={{ opacity: 0, height: 0, marginBottom: 0 }} animate={{ opacity: 1, height: 'auto', marginBottom: 24 }} exit={{ opacity: 0, height: 0, marginBottom: 0 }} className="overflow-hidden">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between shadow-sm relative">
+                 <div className="absolute bottom-0 left-0 h-[3px] bg-yellow-400/50 w-full animate-pulse" />
+                 <div className="flex items-center gap-3 mb-3 sm:mb-0">
+                    <span className="text-xl animate-bounce">🚀</span>
+                    <p className="font-medium text-sm sm:text-base">Server is waking up... This may take up to 60 seconds.</p>
+                 </div>
+                 <button onClick={fetchProductsItems} className="px-5 py-2 bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-800 dark:hover:bg-yellow-700 text-yellow-800 dark:text-yellow-100 font-semibold rounded-md transition-colors text-sm whitespace-nowrap border border-yellow-300 dark:border-yellow-600 active:scale-95">
+                   Retry Now
+                 </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Section Header */}
         <div className="mt-4 mb-1 flex items-center justify-between">
