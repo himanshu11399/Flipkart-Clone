@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Store, Bell, Headphones, TrendingUp, ChevronDown } from "lucide-react";
+import { Store, Bell, Headphones, TrendingUp, ChevronDown, MoreVertical } from "lucide-react";
 
 const menuItems = [
   {
@@ -51,14 +51,18 @@ export default function MoreDropdown() {
       {/* Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`hidden lg:flex items-center gap-1.5 px-4 py-2 rounded-xl transition-all duration-300 group cursor-pointer border-none outline-none ${
+        className={`flex items-center gap-1.5 px-2 sm:px-4 py-2 rounded-xl transition-all duration-300 group cursor-pointer border-none outline-none ${
           isOpen ? "bg-[#2874f0] text-white shadow-md" : "hover:bg-[#2874f0]/10 text-[#212121] dark:text-gray-200 dark:hover:bg-gray-800"
         }`}
       >
-        <span className="text-[15px] font-semibold">More</span>
+        <MoreVertical 
+          size={20} 
+          className={`sm:hidden ${isOpen ? "text-white" : "text-[#2874f0] group-hover:text-[#2874f0]"}`} 
+        />
+        <span className="hidden sm:inline text-[15px] font-semibold">More</span>
         <ChevronDown
           size={16}
-          className={`transition-transform duration-300 ${
+          className={`hidden sm:block transition-transform duration-300 ${
             isOpen ? "rotate-180 text-white" : "group-hover:rotate-180 text-[#2874f0]"
           }`}
         />
@@ -72,10 +76,10 @@ export default function MoreDropdown() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="absolute top-[calc(100%+0.5rem)] right-0 w-[280px] z-50"
+            className="absolute top-[calc(100%+0.5rem)] right-[-50px] sm:right-0 w-[240px] sm:w-[280px] z-50"
           >
             {/* Caret */}
-            <div className="absolute -top-2 right-6 w-4 h-4 bg-white dark:bg-gray-900 rotate-45 border-l border-t border-gray-900/5 dark:border-gray-800 z-0 rounded-tl-sm" />
+            <div className="absolute -top-2 right-[60px] sm:right-6 w-4 h-4 bg-white dark:bg-gray-900 rotate-45 border-l border-t border-gray-900/5 dark:border-gray-800 z-0 rounded-tl-sm" />
 
             {/* Card */}
             <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.08)] ring-1 ring-gray-900/5 dark:ring-gray-800 overflow-hidden relative z-10 py-2">

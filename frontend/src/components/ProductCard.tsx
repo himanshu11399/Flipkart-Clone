@@ -69,64 +69,68 @@ export default function ProductCard({
     rating >= 4 ? 'bg-[#388e3c]' : rating >= 3 ? 'bg-[#ff9f00]' : 'bg-[#f44336]';
 
   return (
-    <div className="group flex flex-col bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 overflow-hidden hover:shadow-[0_4px_20px_rgba(0,0,0,0.13)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-all duration-300 cursor-pointer h-full rounded-sm">
-      {/* Image */}
-      <div className="relative w-full h-52 p-4 flex items-center justify-center overflow-hidden bg-white dark:bg-gray-100/10">
+    <div className="group flex flex-col bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200 cursor-pointer h-full">
+      {/* Image Container */}
+      <div className="relative w-full aspect-[5/4] sm:aspect-square p-2 flex items-center justify-center bg-white dark:bg-gray-800/10 overflow-hidden border-b border-gray-50 dark:border-gray-800/50">
         <img
           src={imageUrl}
           alt={name}
-          className="object-contain max-w-[90%] max-h-[90%] group-hover:scale-105 transition-transform duration-300 mix-blend-multiply dark:mix-blend-normal"
+          className="object-contain w-full h-full mix-blend-multiply dark:mix-blend-normal group-hover:scale-105 transition-transform duration-300"
         />
+        {/* Discount badge */}
         {calculatedDiscount > 0 && (
-          <div className="absolute top-2 left-0 bg-[#388e3c] text-white text-[10px] font-bold px-2 py-1 rounded-r-full shadow-sm">
+          <div className="absolute top-2 left-0 bg-[#388e3c] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-r border border-l-0 border-[#388e3c]">
             {calculatedDiscount}% OFF
           </div>
         )}
       </div>
 
-      {/* Info */}
-      <div className="p-3 flex flex-col flex-grow">
+      {/* Product Details */}
+      <div className="flex flex-col flex-grow p-2.5 sm:p-3 pt-1.5 sm:pt-2">
         {/* Title */}
-        <h3 className="text-[14px] leading-tight text-[#212121] dark:text-gray-100 line-clamp-2 h-9 mb-1 group-hover:text-[#2874f0] transition-colors duration-200">
+        <h3 className="text-[13px] sm:text-sm leading-snug font-medium text-gray-800 dark:text-gray-200 line-clamp-2 h-[36px] sm:h-[40px] mb-1 group-hover:text-[#2874f0] transition-colors">
           {name}
         </h3>
 
         {/* Rating Row */}
-        <div className="flex items-center gap-2 mb-2">
-          <span
-            className={`inline-flex items-center gap-0.5 text-white text-[12px] font-bold px-1.5 py-0.5 rounded-[3px] ${ratingBg}`}
-          >
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <span className={`inline-flex items-center gap-0.5 text-white text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded ${ratingBg}`}>
             {rating}
-            <Star size={10} fill="white" strokeWidth={0} />
+            <Star size={9} fill="white" strokeWidth={0} />
           </span>
-          <span className="text-[#878787] dark:text-gray-400 text-[12px] font-medium">({reviews.toLocaleString('en-IN')})</span>
+          <span className="text-gray-500 text-[11px] sm:text-xs font-medium">({reviews.toLocaleString('en-IN')})</span>
         </div>
 
         <div className="flex-grow" />
 
         {/* Price Row */}
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-[16px] font-bold text-[#212121] dark:text-white">
+        <div className="flex items-center flex-wrap gap-1.5 sm:gap-2 mb-1">
+          <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-white leading-none">
             ₹{price.toLocaleString('en-IN')}
           </span>
           {displayOriginal && (
-            <span className="text-[14px] text-[#878787] dark:text-gray-500 line-through">
+            <span className="text-[11px] sm:text-xs text-gray-500 line-through leading-none">
               ₹{displayOriginal.toLocaleString('en-IN')}
             </span>
           )}
           {calculatedDiscount > 0 && (
-            <span className="text-[13px] font-semibold text-[#388e3c]">{calculatedDiscount}% off</span>
+            <span className="text-[11px] sm:text-xs font-semibold text-[#388e3c] leading-none">{calculatedDiscount}% off</span>
           )}
         </div>
+        
+        {/* Free Delivery Label */}
+        <div className="text-[10px] sm:text-xs text-gray-500 font-medium mb-1.5">
+          Free delivery
+        </div>
 
-        {/* Add to Cart */}
+        {/* Action Button */}
         <button
           onClick={handleAddToCart}
           disabled={isAdding}
-          className="w-full flex items-center justify-center gap-2 py-2.5 px-3 bg-[#ff9f00] hover:bg-[#fb641b] text-white text-sm font-bold uppercase rounded-[2px] transition-all duration-200 active:scale-[0.98] disabled:opacity-60 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)] hover:shadow-md"
+          className="w-full py-1.5 sm:py-2 px-2 flex items-center justify-center gap-1.5 bg-[#f0f5ff] hover:bg-[#2874f0] text-[#2874f0] hover:text-white dark:bg-gray-800 dark:hover:bg-[#2874f0] dark:text-gray-200 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 disabled:opacity-60 disabled:hover:bg-[#f0f5ff] disabled:hover:text-[#2874f0]"
         >
-          <ShoppingCart size={16} strokeWidth={2.5} />
-          {isAdding ? 'Adding…' : 'ADD TO CART'}
+          <ShoppingCart size={15} className="stroke-[2.5px]" />
+          {isAdding ? 'Adding...' : 'Add to Cart'}
         </button>
       </div>
     </div>
