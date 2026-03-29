@@ -102,9 +102,9 @@ export default function ProductDetail() {
           {/* Left Side: Images & Buttons */}
           <div className="w-full md:w-2/5 p-4 flex flex-col items-center border-r border-[#f0f0f0] dark:border-gray-800 self-start sticky top-20">
             
-            <div className="flex gap-4 w-full h-[400px] mb-6">
+            <div className="flex flex-col-reverse md:flex-row gap-4 w-full h-auto md:h-[400px] mb-6">
               {/* Thumbnails */}
-              <div className="w-16 flex flex-col gap-2 overflow-y-auto hide-scrollbar">
+              <div className="w-full h-16 md:w-16 md:h-full flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-y-auto hide-scrollbar">
                 {images.map((img, idx) => (
                   <button 
                     key={idx}

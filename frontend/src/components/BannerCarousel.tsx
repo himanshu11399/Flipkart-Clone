@@ -71,10 +71,10 @@ export default function BannerCarousel() {
               className={`rounded-[12px] p-6 pr-10 flex flex-col justify-center h-[240px] relative overflow-hidden transition-transform hover:scale-[1.01] duration-300 shadow-sm border border-gray-100/50 dark:border-gray-800 ${banner.bg} ${banner.textDark ? 'text-[#212121] dark:text-gray-100' : 'text-white'}`}
             >
               <div className="relative z-10 max-w-[75%] space-y-2.5">
-                <h2 className="text-2xl font-black leading-tight tracking-tight mt-6">
+                <h2 className="text-xl md:text-2xl font-black leading-tight tracking-tight mt-6">
                   {banner.title}
                 </h2>
-                <p className="text-xl font-bold tracking-tight opacity-90">
+                <p className="text-lg md:text-xl font-bold tracking-tight opacity-90">
                   {banner.subtitle}
                 </p>
                 <p className={`text-sm tracking-wide mt-2 ${banner.textDark ? 'text-gray-600 font-medium' : 'text-blue-50/80 font-normal'}`}>

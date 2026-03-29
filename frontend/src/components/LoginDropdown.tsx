@@ -61,12 +61,12 @@ export default function LoginDropdown() {
       {/* Trigger Button */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 group cursor-pointer border-none outline-none ${
+        className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-xl transition-all duration-300 group cursor-pointer border-none outline-none ${
           isOpen ? 'bg-[#2874f0] text-white shadow-md' : 'hover:bg-[#2874f0]/10 text-[#212121] dark:text-gray-200 dark:hover:bg-gray-800'
         }`}
       >
         <User size={22} className={isOpen ? "text-white" : "text-[#2874f0] group-hover:text-[#2874f0]"} />
-        <span className="text-[15px] font-semibold">
+        <span className="hidden sm:inline text-[15px] font-semibold">
           Customer
         </span>
         <ChevronDown 

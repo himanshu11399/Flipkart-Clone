@@ -99,7 +99,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 font-sans select-none flex flex-col pointer-events-none">
       <div className={`w-full bg-white dark:bg-gray-950 relative z-50 pointer-events-auto transition-all duration-300 border-b border-transparent dark:border-gray-800/50 ${isScrolled ? 'shadow-[0_4px_12px_rgba(0,0,0,0.05)]' : 'shadow-sm'}`}>
         {/* Row 1: Top Strip */}
-        <div className="container mx-auto px-4 lg:px-20 py-1.5 flex items-center justify-between overflow-hidden">
+        <div className="container mx-auto px-2 sm:px-4 lg:px-20 py-1.5 flex items-center justify-between overflow-hidden">
           <div className="flex items-center space-x-3">
             {/* Flipkart Logo Case */}
             <Link href="/" onClick={() => setSelectedCategory('For You')} className="bg-[#ffe11b] px-3 py-1.5 rounded-[4px] flex items-center group cursor-pointer">
@@ -126,7 +126,7 @@ export default function Navbar() {
         </div>
 
         {/* Row 2: Search & Actions */}
-        <div className="container mx-auto px-4 lg:px-20 py-2.5 flex items-center gap-6">
+        <div className="container mx-auto px-2 sm:px-4 lg:px-20 py-2.5 flex items-center gap-2 sm:gap-4 md:gap-6">
           {/* Search Input Container */}
           <div className={`flex-1 relative flex items-center bg-[#f0f5ff] dark:bg-gray-800/50 rounded-[8px] border-[1.5px] transition-all duration-200 h-[42px] ${isSearchFocused ? 'border-[#2874f0] bg-white dark:bg-gray-900 ring-2 ring-[#2874f0]/10 shadow-sm' : 'border-[#2874f0]/30 dark:border-gray-700'}`}>
             <div className="flex items-center justify-center w-12 text-[#878787] dark:text-gray-400">
@@ -144,7 +144,7 @@ export default function Navbar() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center space-x-4 md:space-x-6 text-[#212121] dark:text-gray-200">
+          <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-6 text-[#212121] dark:text-gray-200">
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -199,9 +199,9 @@ export default function Navbar() {
             <MoreDropdown />
 
             {/* Cart Section */}
-            <Link href="/cart" className="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 rounded-lg transition-colors font-medium text-[#212121] dark:text-gray-200">
+            <Link href="/cart" className="flex items-center gap-1 sm:gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 px-2 sm:px-3 py-2 rounded-lg transition-colors font-medium text-[#212121] dark:text-gray-200">
               <LuShoppingCart size={22} className="text-[#212121] dark:text-gray-200" />
-              <span className="text-[15px]">Cart</span>
+              <span className="hidden sm:inline text-[15px]">Cart</span>
             </Link>
           </div>
         </div>
