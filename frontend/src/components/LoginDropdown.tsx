@@ -71,7 +71,7 @@ export default function LoginDropdown() {
         </span>
         <ChevronDown 
           size={16} 
-          className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-white' : 'group-hover:rotate-180 text-[#2874f0]'}`} 
+          className={`hidden sm:block transition-transform duration-300 ${isOpen ? 'rotate-180 text-white' : 'group-hover:rotate-180 text-[#2874f0]'}`} 
         />
       </button>
 
@@ -83,10 +83,10 @@ export default function LoginDropdown() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="absolute top-[calc(100%+0.5rem)] left-1/2 -translate-x-1/2 w-[320px] z-50"
+            className="absolute top-[calc(100%+0.5rem)] right-[-60px] sm:left-1/2 sm:right-auto sm:-translate-x-1/2 w-[280px] sm:w-[320px] z-50"
           >
             {/* Caret pointing up */}
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white dark:bg-gray-800 rotate-45 border-l border-t border-gray-900/5 dark:border-gray-700 shadow-[-2px_-2px_4px_rgba(0,0,0,0.02)] z-0 rounded-tl-sm"></div>
+            <div className="absolute -top-2 right-[70px] sm:left-1/2 sm:right-auto sm:-translate-x-1/2 w-4 h-4 bg-white dark:bg-gray-800 rotate-45 border-l border-t border-gray-900/5 dark:border-gray-700 shadow-[-2px_-2px_4px_rgba(0,0,0,0.02)] z-0 rounded-tl-sm"></div>
 
             {/* Main Card */}
             <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.08)] ring-1 ring-gray-900/5 dark:ring-gray-700/50 overflow-hidden relative z-10">

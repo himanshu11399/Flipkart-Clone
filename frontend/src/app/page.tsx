@@ -26,6 +26,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerRow, setItemsPerRow] = useState(2);
 
   const { searchQuery, selectedCategory } = useFilter();
 
@@ -52,6 +53,18 @@ export default function Home() {
     };
     fetchProducts();
   }, [selectedCategory, searchQuery]);
+
+  useEffect(() => {
+    const updateItemsPerRow = () => {
+      if (window.innerWidth >= 1024) setItemsPerRow(4);      // lg/md
+      else if (window.innerWidth >= 640) setItemsPerRow(3);  // sm
+      else setItemsPerRow(2);                                // mobile
+    };
+    
+    updateItemsPerRow();
+    window.addEventListener('resize', updateItemsPerRow);
+    return () => window.removeEventListener('resize', updateItemsPerRow);
+  }, []);
 
   const handleLoadMore = async () => {
     const nextPage = page + 1;
@@ -96,7 +109,7 @@ export default function Home() {
 
         <div>
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
                 <div key={n} className="bg-white border border-gray-100 h-[370px] p-4 flex flex-col animate-pulse rounded-sm">
                   <div className="w-full h-44 bg-gray-100 rounded-sm mb-4" />
@@ -116,18 +129,25 @@ export default function Home() {
             </div>
           ) : !error && (
             <>
-              <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <motion.div layout className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                 <AnimatePresence mode="popLayout">
-                  {products.map((product, index) => (
-                    <motion.div
-                      key={product.id}
-                      layout
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.22, type: 'spring', stiffness: 260, damping: 22 }}
-                      className="h-full"
-                    >
+                  {products.map((product, index) => {
+                    const rowIndex = Math.floor(index / itemsPerRow);
+                    let bgWrapperClass = "bg-transparent"; 
+                    if (rowIndex < 2) bgWrapperClass = "bg-gray-100/60 dark:bg-gray-900/50";
+                    else if (rowIndex < 4) bgWrapperClass = "bg-blue-50/50 dark:bg-blue-900/20";
+                    else bgWrapperClass = "bg-transparent";
+
+                    return (
+                      <motion.div
+                        key={product.id}
+                        layout
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.22, type: 'spring', stiffness: 260, damping: 22 }}
+                        className={`h-full rounded-2xl p-1.5 sm:p-2 transition-colors duration-500 ${bgWrapperClass}`}
+                      >
                       <Link href={`/product/${product.id}`} className="block h-full cursor-pointer outline-none">
                         <ProductCard
                           id={product.id}
@@ -140,7 +160,7 @@ export default function Home() {
                         />
                       </Link>
                     </motion.div>
-                  ))}
+                  )})}
                 </AnimatePresence>
               </motion.div>
 
