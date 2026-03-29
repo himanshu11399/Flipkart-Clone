@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import axiosInstance from '@/lib/axios';
 
-export default function OrderConfirmation() {
+function OrderConfirmationContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
   const [orderData, setOrderData] = useState<any>(null);
@@ -119,5 +119,13 @@ export default function OrderConfirmation() {
 
       </div>
     </div>
+  );
+}
+
+export default function OrderConfirmation() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f1f3f6] dark:bg-gray-950 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2874f0]"></div></div>}>
+      <OrderConfirmationContent />
+    </Suspense>
   );
 }

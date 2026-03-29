@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/lib/axios';
 import toast from 'react-hot-toast';
@@ -8,7 +8,7 @@ import { CheckCircle2, ChevronRight, User, Phone, MapPin } from 'lucide-react';
 import { getProductById } from '@/lib/services/productService';
 const GUEST_USER_ID = '00000000-0000-4000-a000-000000000000';
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [cartItems, setCartItems] = useState<any[]>([]);
@@ -317,6 +317,14 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div className="bg-[#f1f3f6] dark:bg-gray-950 min-h-screen py-8 flex justify-center items-start">Loading...</div>}>
+      <CheckoutContent />
+    </Suspense>
   );
 }
 

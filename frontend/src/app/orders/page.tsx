@@ -19,8 +19,8 @@ export default function OrdersPage() {
     try {
       const { data } = await api.get(`/orders?userId=${GUEST_USER_ID}`);
       setOrders(data.data || []);
-    } catch (error) {
-      console.error("Failed to fetch orders:", error);
+    } catch (error: any) {
+      console.error("Failed to fetch orders:", error.response || error.message);
     } finally {
       setLoading(false);
     }

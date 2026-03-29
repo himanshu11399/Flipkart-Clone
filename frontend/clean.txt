@@ -1,0 +1,102 @@
+﻿
+> scaler-assignment@0.1.0 build
+> next build
+
+  Γû▓ Next.js 14.2.35
+  - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/9) ...
+node.exe :  Γ¿» useSearchParams() should be 
+wrapped in a suspense boundary at page 
+"/order-confirmation". Read more: https://nextjs.or
+g/docs/messages/missing-suspense-with-csr-bailout
+At C:\Program Files\nodejs\npm.ps1:29 char:3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( Γ¿»  
+   useSearchP...ith-csr-bailout:String) [], Remot  
+  eException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    at o (C:\Users\himan\Documents\ScalerAssignment
+\frontend\.next\server\chunks\260.js:1:21562)
+    at c (C:\Users\himan\Documents\ScalerAssignment
+\frontend\.next\server\chunks\260.js:1:32498)
+    at d (C:\Users\himan\Documents\ScalerAssignment
+\frontend\.next\server\app\order-confirmation\page.
+js:1:2829)
+    at nj (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:46252)
+    at nM (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:47572)
+    at nL (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:64547)
+    at nI (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:47011)
+    at nM (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:47718)
+    at nM (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:61547)
+    at nL (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:64547)
+
+Error occurred prerendering page 
+"/order-confirmation". Read more: 
+https://nextjs.org/docs/messages/prerender-error
+
+   Generating static pages (2/9) 
+   Generating static pages (4/9) 
+ Γ¿» useSearchParams() should be wrapped in a 
+suspense boundary at page "/checkout". Read more: h
+ttps://nextjs.org/docs/messages/missing-suspense-wi
+th-csr-bailout
+    at o (C:\Users\himan\Documents\ScalerAssignment
+\frontend\.next\server\chunks\260.js:1:21562)
+    at c (C:\Users\himan\Documents\ScalerAssignment
+\frontend\.next\server\chunks\260.js:1:32498)
+    at o (C:\Users\himan\Documents\ScalerAssignment
+\frontend\.next\server\app\checkout\page.js:1:2927)
+    at nj (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:46252)
+    at nM (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:47572)
+    at nL (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:64547)
+    at nI (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:47011)
+    at nM (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:47718)
+    at nM (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:61547)
+    at nL (C:\Users\himan\Documents\ScalerAssignmen
+t\frontend\node_modules\next\dist\compiled\next-ser
+ver\app-page.runtime.prod.js:12:64547)
+
+Error occurred prerendering page "/checkout". Read 
+more: 
+https://nextjs.org/docs/messages/prerender-error
+
+   Generating static pages (6/9) 
+ Γ£ô Generating static pages (9/9)
+
+> Export encountered errors on following paths:
+	/checkout/page: /checkout
+	/order-confirmation/page: /order-confirmation
