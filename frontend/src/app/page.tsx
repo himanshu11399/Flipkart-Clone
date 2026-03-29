@@ -31,16 +31,22 @@ export default function Home() {
 
   const { searchQuery, selectedCategory } = useFilter();
 
-  const fetchProductsItems = useCallback(async () => {
+  const fetchProductsItems = useCallback(async (isAutoRetry: boolean = false) => {
     let slowTimeoutId: NodeJS.Timeout | null = null;
+    let autoRetryTimeoutId: NodeJS.Timeout | null = null;
+    
     try {
       setLoading(true);
       setError(null);
-      setSlowResponse(false);
+      if (!isAutoRetry) setSlowResponse(false);
       setPage(1);
-      
+
       slowTimeoutId = setTimeout(() => {
         setSlowResponse(true);
+        // Auto-retry 10 seconds after detecting cold start
+        autoRetryTimeoutId = setTimeout(() => {
+          fetchProductsItems(true);
+        }, 10000);
       }, 5000);
 
       const { products: data, totalPages: tp } = await getProductsWithMeta({
@@ -49,24 +55,26 @@ export default function Home() {
         page: 1,
         limit: PAGE_LIMIT,
       });
-      
+
       if (slowTimeoutId) clearTimeout(slowTimeoutId);
-      setSlowResponse(false);
-      
+      if (autoRetryTimeoutId) clearTimeout(autoRetryTimeoutId);
+      if (!isAutoRetry) setSlowResponse(false);
+
       setProducts(data || []);
       setTotalPages(tp);
     } catch (err: any) {
       if (slowTimeoutId) clearTimeout(slowTimeoutId);
+      if (autoRetryTimeoutId) clearTimeout(autoRetryTimeoutId);
       setSlowResponse(false);
-      setError('Server is unavailable. Please try again.');
+      setError('⚠️ Server is in cold start mode. Please refresh or retry in a few seconds.');
     } finally {
       if (slowTimeoutId) clearTimeout(slowTimeoutId);
-      setLoading(false);
+      if (!isAutoRetry) setLoading(false);
     }
   }, [selectedCategory, searchQuery]);
 
   useEffect(() => {
-    fetchProductsItems();
+    fetchProductsItems(false);
   }, [fetchProductsItems]);
 
   useEffect(() => {
@@ -75,7 +83,7 @@ export default function Home() {
       else if (window.innerWidth >= 640) setItemsPerRow(3);  // sm
       else setItemsPerRow(2);                                // mobile
     };
-    
+
     updateItemsPerRow();
     window.addEventListener('resize', updateItemsPerRow);
     return () => window.removeEventListener('resize', updateItemsPerRow);
@@ -109,11 +117,11 @@ export default function Home() {
           {error && (
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg p-3 sm:p-4 mb-6 flex flex-col sm:flex-row items-center justify-between shadow-sm">
               <div className="flex items-center gap-3 mb-3 sm:mb-0">
-                 <span className="text-xl">⚠️</span>
-                 <p className="font-medium text-sm sm:text-base">{error}</p>
+                <span className="text-xl">⚠️</span>
+                <p className="font-medium text-sm sm:text-base">{error}</p>
               </div>
-              <button onClick={fetchProductsItems} className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-sm transition-colors text-sm whitespace-nowrap active:scale-95">
-                Retry Connection
+              <button onClick={() => fetchProductsItems(false)} className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-sm transition-colors text-sm whitespace-nowrap active:scale-95">
+                Retry Now
               </button>
             </motion.div>
           )}
@@ -124,14 +132,14 @@ export default function Home() {
           {slowResponse && loading && !error && (
             <motion.div initial={{ opacity: 0, height: 0, marginBottom: 0 }} animate={{ opacity: 1, height: 'auto', marginBottom: 24 }} exit={{ opacity: 0, height: 0, marginBottom: 0 }} className="overflow-hidden">
               <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between shadow-sm relative">
-                 <div className="absolute bottom-0 left-0 h-[3px] bg-yellow-400/50 w-full animate-pulse" />
-                 <div className="flex items-center gap-3 mb-3 sm:mb-0">
-                    <span className="text-xl animate-bounce">🚀</span>
-                    <p className="font-medium text-sm sm:text-base">Server is waking up... This may take up to 60 seconds.</p>
-                 </div>
-                 <button onClick={fetchProductsItems} className="px-5 py-2 bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-800 dark:hover:bg-yellow-700 text-yellow-800 dark:text-yellow-100 font-semibold rounded-md transition-colors text-sm whitespace-nowrap border border-yellow-300 dark:border-yellow-600 active:scale-95">
-                   Retry Now
-                 </button>
+                <div className="absolute bottom-0 left-0 h-[3px] bg-yellow-400/50 w-full animate-pulse" />
+                <div className="flex items-center gap-3 mb-3 sm:mb-0">
+                  <span className="text-xl animate-bounce">🚀</span>
+                  <p className="font-medium text-sm sm:text-base">Server is waking up (cold start). This may take up to 60 seconds.</p>
+                </div>
+                <button onClick={() => fetchProductsItems(false)} className="px-5 py-2 bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-800 dark:hover:bg-yellow-700 text-yellow-800 dark:text-yellow-100 font-semibold rounded-md transition-colors text-sm whitespace-nowrap border border-yellow-300 dark:border-yellow-600 active:scale-95">
+                  Retry Now
+                </button>
               </div>
             </motion.div>
           )}
@@ -174,7 +182,7 @@ export default function Home() {
                 <AnimatePresence mode="popLayout">
                   {products.map((product, index) => {
                     const rowIndex = Math.floor(index / itemsPerRow);
-                    let bgWrapperClass = "bg-transparent"; 
+                    let bgWrapperClass = "bg-transparent";
                     if (rowIndex < 2) bgWrapperClass = "bg-gray-100/60 dark:bg-gray-900/50";
                     else if (rowIndex < 4) bgWrapperClass = "bg-blue-50/50 dark:bg-blue-900/20";
                     else bgWrapperClass = "bg-transparent";
@@ -189,19 +197,20 @@ export default function Home() {
                         transition={{ duration: 0.22, type: 'spring', stiffness: 260, damping: 22 }}
                         className={`h-full rounded-2xl p-1.5 sm:p-2 transition-colors duration-500 ${bgWrapperClass}`}
                       >
-                      <Link href={`/product/${product.id}`} className="block h-full cursor-pointer outline-none">
-                        <ProductCard
-                          id={product.id}
-                          name={product.name}
-                          price={Number(product.price)}
-                          originalPrice={product.originalPrice ? Number(product.originalPrice) : undefined}
-                          rating={product.rating}
-                          reviews={product.reviews}
-                          imageUrl={product.images && product.images.length > 0 ? product.images[0] : 'https://placehold.co/400x400/eeeeee/999999?text=No+Image'}
-                        />
-                      </Link>
-                    </motion.div>
-                  )})}
+                        <Link href={`/product/${product.id}`} className="block h-full cursor-pointer outline-none">
+                          <ProductCard
+                            id={product.id}
+                            name={product.name}
+                            price={Number(product.price)}
+                            originalPrice={product.originalPrice ? Number(product.originalPrice) : undefined}
+                            rating={product.rating}
+                            reviews={product.reviews}
+                            imageUrl={product.images && product.images.length > 0 ? product.images[0] : 'https://placehold.co/400x400/eeeeee/999999?text=No+Image'}
+                          />
+                        </Link>
+                      </motion.div>
+                    )
+                  })}
                 </AnimatePresence>
               </motion.div>
 
