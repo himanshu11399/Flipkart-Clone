@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaHome, FaSun, FaMoon } from "react-icons/fa";
 import { useFilter } from "@/context/FilterContext";
 import { useTheme } from "@/context/ThemeContext";
+import { getProducts, Product } from '@/lib/services/productService';
 import LoginDropdown from "./LoginDropdown";
 import MoreDropdown from "./MoreDropdown";
 import { 
@@ -52,13 +53,43 @@ const categories = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showCategories, setShowCategories] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const { searchQuery, setSearchQuery, selectedCategory, setSelectedCategory } = useFilter();
   
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  
   const isHomeActive = pathname === "/";
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+    
+    if (!isSearchFocused) return;
+    
+    const handler = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const data = await getProducts({ search: searchQuery, limit: 6 });
+        setSuggestions(data || []);
+        setShowSuggestions(true);
+      } catch (err) {
+        console.error("Failed to fetch search suggestions", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [searchQuery, isSearchFocused]);
 
   useEffect(() => {
     let lastScrollYValue = window.scrollY;
@@ -137,10 +168,53 @@ export default function Navbar() {
               placeholder="Search for Products, Brands and More" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-transparent text-[#212121] dark:text-gray-100 outline-none text-[15px] placeholder:text-[#878787] dark:placeholder:text-gray-500 font-normal"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setIsSearchFocused(false);
+                  if (!isHomeActive) {
+                    router.push('/');
+                  }
+                }
+              }}
+              className="w-full bg-transparent text-[#212121] dark:text-gray-100 outline-none text-[15px] placeholder:text-[#878787] dark:placeholder:text-gray-500 font-normal py-2"
               onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setIsSearchFocused(false)}
+              onBlur={() => {
+                // Delay hiding slightly to allow clicking on suggestions
+                setTimeout(() => setIsSearchFocused(false), 200);
+              }}
             />
+            {/* Search Suggestions Dropdown */}
+            {isSearchFocused && showSuggestions && suggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50 overflow-hidden">
+                {suggestions.map((product) => (
+                  <button
+                    key={product.id}
+                    onClick={() => {
+                      setSearchQuery(product.name);
+                      setIsSearchFocused(false);
+                      if (!isHomeActive) {
+                        router.push('/');
+                      }
+                    }}
+                    className="w-full text-left flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer border-b border-gray-100 dark:border-gray-800 last:border-0 group"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-md overflow-hidden flex items-center justify-center">
+                      <LuSearch size={16} className="text-gray-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                        {product.name}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate flex items-center gap-1 mt-0.5">
+                        <LuSearch size={10} className="text-gray-400" />
+                        Search in {product.category}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+            {/* End of Suggestions */}
           </div>
 
           {/* Action Buttons */}
